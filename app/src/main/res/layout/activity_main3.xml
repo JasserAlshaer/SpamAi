@@ -33,6 +33,7 @@
         android:background="@color/H"
         android:textColor="@color/black"
         android:hint="***************"
+        android:textColorHint="@color/black"
         android:inputType="textPassword"
         android:textAlignment="center"
         android:layout_gravity="center_horizontal"

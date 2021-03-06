@@ -13,6 +13,7 @@
         android:orientation="vertical">
         <include
             layout="@layout/action_bar"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -28,12 +29,11 @@
                     android:layout_height="wrap_content"
                     android:textSize="10pt"
                     android:text="mail to : "
-                    android:textColor="@color/black"
-                    android:background="@color/H"/>
+                    android:textColor="@color/black" />
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="textEmailAddress" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -110,8 +110,8 @@
                 android:background="@color/H"
                 android:text="cancel"
                 android:layout_marginTop="8pt"/>
-        </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
 
     <RelativeLayout
@@ -119,7 +119,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start">
         <include
-            layout="@layout/drawer_option"/>
+            layout="@layout/drawer_option" />
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
 
