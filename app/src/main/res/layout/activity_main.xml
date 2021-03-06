@@ -15,13 +15,14 @@
         android:textAlignment="center"
         android:layout_marginTop="25dp"
         android:text="Spam Filtering"
+        android:textStyle="bold"
         android:textColor="@color/black"
         android:gravity="center_horizontal" />
     <ImageView
         android:layout_width="250dp"
         android:layout_height="350dp"
         android:layout_gravity="center"
-        android:src="@color/white"
+        android:src="@drawable/spam"
         android:layout_marginTop="15dp"/>
     <Button
         android:layout_width="250dp"
