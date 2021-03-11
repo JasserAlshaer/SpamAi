@@ -24,6 +24,7 @@
                 android:orientation="horizontal"
                 android:layout_gravity="center">
                 <TextView
+                    android:id="@+id/tab1"
                     android:layout_width="131dp"
                     android:layout_height="131dp"
                     android:text="tab1"
@@ -34,6 +35,7 @@
                     android:textColor="@color/black"
                     android:background="@color/H"/>
                 <TextView
+                    android:id="@+id/tab2"
                     android:layout_width="131dp"
                     android:layout_height="131dp"
                     android:text="tab2"
@@ -44,6 +46,7 @@
                     android:textSize="12pt"
                     android:background="@color/H"/>
                 <TextView
+                    android:id="@+id/tab3"
                     android:layout_width="131dp"
                     android:layout_height="131dp"
                     android:text="tab3"
@@ -56,6 +59,7 @@
                 <!-- Write the code of design here -->
             </LinearLayout>
             <ListView
+                android:id="@+id/emailsList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
