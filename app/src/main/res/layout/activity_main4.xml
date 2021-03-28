@@ -72,33 +72,27 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="15pt"
                 android:background="@color/H">
+
                 <ImageView
-                    android:onClick="onImageiconClick"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_margin="10pt"
+                    android:onClick="onImageiconClick"
                     android:src="@drawable/ic_baseline_image_24" />
 
                 <ImageView
-                    android:onClick="onFileIconClick"
                     android:layout_width="40dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_margin="10pt"
+                    android:onClick="onFileIconClick"
                     android:src="@drawable/ic_baseline_attach_file_24" />
 
                 <ImageView
                     android:layout_width="40dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
                     android:layout_margin="10pt"
                     android:onClick="onContactIconClick"
                     android:src="@drawable/ic_baseline_contact_phone_24" />
-
-                <ImageView
-                    android:onClick="onCalenderIconClick"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_margin="10pt"
-                    android:src="@drawable/ic_baseline_calendar_today_24" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -132,33 +126,6 @@
             layout="@layout/drawer_option" />
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,18 +1,15 @@
 package com.example.spamfilteringusingai_2;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
+import androidx.appcompat.app.AppCompatActivity;
 public class MainActivity2 extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,25 +29,20 @@ public class MainActivity2 extends AppCompatActivity {
                 emailtxt = email.getText().toString();
                 passstxt = password.getText().toString();
                 if (emailtxt.contains("@") && emailtxt.contains(".com")) {
+                    //2.send data Gmail Api
+                    //3. save the email for future used
+                    SharedPreferences sp=getSharedPreferences("spamFillteringapp",Context.MODE_PRIVATE);
+                    //add data
+                    SharedPreferences.Editor editor=sp.edit();
+                    editor.putString("useremail",emailtxt);
+                    editor.commit();
                 } else {
+                    Intent mo=new Intent(MainActivity2.this,MainActivity4.class);
+                    startActivity(mo);
                     Toast.makeText(MainActivity2.this, "Please Enter correct email ", Toast.LENGTH_SHORT).show();
                 }
-                //2.send data Gmail Api
-
-
-                //3. save the email for future used
-
-                SharedPreferences sp=getSharedPreferences("spamFillteringapp",Context.MODE_PRIVATE);
-               //add data
-                SharedPreferences.Editor editor=sp.edit();
-                editor.putString("useremail",emailtxt);
-                editor.commit();
-
-
             }
 
         });
     }
 }
-
-

@@ -1,6 +1,9 @@
 package com.example.spamfilteringusingai_2;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 
@@ -23,28 +26,32 @@ public class MainActivity4 extends AppCompatActivity {
     }
 
     public void onImageiconClick(View view) {
-
+        Intent intent=new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent,1);
     }
-
     public void onFileIconClick(View view){
-
+    Intent choose=new Intent(Intent.ACTION_GET_CONTENT);
+    choose.setType("*/*");
+    choose=Intent.createChooser(choose,"Choose a file");
+    startActivityForResult(choose,1);
     }
-    public void      onContactIconClick    (View view){
-
-
-    }
-    public void onCalenderIconClick (View view){
-
+    public void onContactIconClick(View view){
+     Intent con=new Intent(Intent.ACTION_PICK,ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+     startActivityForResult(con,1);
     }
 
     public void onSendClick(View view) {
+    String to,subject,massage;
+    to=text1.getText().toString();
+    subject=text2.getText().toString();
+    massage=text3.getText().toString();
     }
 
-        public void onCancelClick(View view){
-
-        }
+    public void onCancelClick(View view){
+     finish();
+    }
         //Drawer Menu Method
-        public void onDrawerMenuClick(View view){
+    public void onDrawerMenuClick(View view){
 
         }
     public void onHomeClicked (View view){
