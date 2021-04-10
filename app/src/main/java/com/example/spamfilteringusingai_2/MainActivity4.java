@@ -14,11 +14,15 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.services.gmail.Gmail;
 
 public class MainActivity4 extends AppCompatActivity {
     EditText text1;
     EditText text2;
     EditText text3;
+    Gmail mService;
+    HttpTransport transport;
     DrawerLayout drawerMenuForScreen;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +52,10 @@ public class MainActivity4 extends AppCompatActivity {
     }
 
     public void onSendClick(View view) {
-    String to,subject,massage;
+    String to,subject,bodyText;
     to=text1.getText().toString();
     subject=text2.getText().toString();
-    massage=text3.getText().toString();
+    bodyText=text3.getText().toString();
     }
 
     public void onCancelClick(View view){
@@ -74,16 +78,19 @@ public class MainActivity4 extends AppCompatActivity {
         }
     }
     public void onHomeClicked (View view){
-
+         Intent home=new Intent(getApplicationContext(),MainActivity6.class);
+         startActivity(home);
     }
     public void onSendEmailClick(View view){
-
+        Intent send=new Intent(getApplicationContext(),MainActivity4.class);
+        startActivity(send);
     }
     public void onTrushClicked(View view){
-
+        Intent trush=new Intent(getApplicationContext(),MainActivity5.class);
+        startActivity(trush);
     }
     public void onLogoutclicked(View view){
-
+        signOut();
     }
     private void signOut() {
         MainActivity.mGoogleSignInClient.signOut()

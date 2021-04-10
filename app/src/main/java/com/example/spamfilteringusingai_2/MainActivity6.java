@@ -130,13 +130,16 @@ public class MainActivity6 extends AppCompatActivity {
         }
     }
     public void onHomeClicked (View view){
-
+        Intent home=new Intent(getApplicationContext(),MainActivity6.class);
+        startActivity(home);
     }
     public void onSendEmailClick(View view){
-
+        Intent send=new Intent(getApplicationContext(),MainActivity4.class);
+        startActivity(send);
     }
     public void onTrushClicked(View view){
-
+        Intent trush=new Intent(getApplicationContext(),MainActivity5.class);
+        startActivity(trush);
     }
     public void onLogoutclicked(View view){
         signOut();
@@ -173,48 +176,35 @@ public class MainActivity6 extends AppCompatActivity {
                             .setApplicationName("Spam Filtering")
                             .build();
             try {
-                List<String> message2 = new ArrayList();
-                String query = "in:spam";
-
+                List<String> stringList = new ArrayList();
                 ListMessagesResponse listMessagesResponse = mService.users().messages().list(MainActivity.accountemail)
                         .setQ(querys[0])
-                        .setMaxResults(Long.valueOf(20))
+                        .setMaxResults(Long.valueOf(6))
                         .setIncludeSpamTrash(true)
                         .execute();
                 List<Message> messageList = listMessagesResponse.getMessages();
 
                 for (Message message : messageList) {
                     Message messageText = mService.users().messages().get(MainActivity.accountemail, message.getId()).setFormat("full").execute();
-                    //Get Headers
-                   List<MessagePartHeader> headers = messageText.getPayload().getHeaders();
-                    String from="";
-                    for (MessagePartHeader header:headers){
-                        if(header.getName().equals("From")){
-                            from=header.getValue();
-                            break;
+                        //Get Headers
+                        List<MessagePartHeader> headers = messageText.getPayload().getHeaders();
+                        String from="";
+                        for (MessagePartHeader header:headers){
+                            if(header.getName().equals("From")){
+                                from=header.getValue();
+                                break;
+                            }
                         }
-                    }
 
-                    Log.i("Reciver",MainActivity.accountemail);
-                    Log.i("From",from);
-                    Log.i("Label",messageText.getLabelIds().get(0));
-                    Log.i("Snippeset",messageText.getSnippet());
-                    emails.add(from);
-                    qoutation.add(messageText.getSnippet());
-                    Log.i("hr","\n\n *******************************************************");
-                //Get Body
-                    /*try {
-                        byte[] bodyBytes = Base64.decodeBase64(messageText.getPayload().getParts().get(0).getBody().getData().trim());
-                        String body = new String(bodyBytes, "UTF-8");
-                        messageList2.add(body);
-                        Log.d("Body", body);
-                    }catch (Exception ex){
-                        continue;
-                    }*/
+                        Log.i("Reciver",MainActivity.accountemail);
+                        Log.i("From",from);
+                        Log.i("Label",messageText.getLabelIds().get(0));
+                        Log.i("Snippeset",messageText.getSnippet());
+                        emails.add(from);
+                        qoutation.add(messageText.getSnippet());
+                        Log.i("hr","\n\n *******************************************************");
 
                 }
-
-               // Message sendMail=mService.users().messages().send(MainActivity.accountemail,);
             }catch (IOException exception){
                 Log.e("BUG", "SheetUpdate IOException"+exception.getMessage());
                 exception.printStackTrace();

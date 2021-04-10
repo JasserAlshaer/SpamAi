@@ -35,6 +35,21 @@ public class MainActivity7 extends AppCompatActivity {
             draw.closeDrawer(GravityCompat.START);
         }
     }
+    public void onHomeClicked (View view){
+        Intent home=new Intent(getApplicationContext(),MainActivity6.class);
+        startActivity(home);
+    }
+    public void onSendEmailClick(View view){
+        Intent send=new Intent(getApplicationContext(),MainActivity4.class);
+        startActivity(send);
+    }
+    public void onTrushClicked(View view){
+        Intent trush=new Intent(getApplicationContext(),MainActivity5.class);
+        startActivity(trush);
+    }
+    public void onLogoutclicked(View view){
+        signOut();
+    }
     private void signOut() {
         MainActivity.mGoogleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
