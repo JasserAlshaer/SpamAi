@@ -30,7 +30,7 @@
    public class MainActivity extends AppCompatActivity {
        private static final int RC_SIGN_IN = 9001;
        private  static final int REQUEST_CODE_TOKEN_AUTH=1337;
-       GoogleSignInClient mGoogleSignInClient;
+       public static GoogleSignInClient mGoogleSignInClient;
        GoogleSignInAccount account;
        GoogleAuthUtil mAuth;
        Context mContext = this;
@@ -81,6 +81,7 @@
                     getApplicationContext(), Arrays.asList(SCOPES))
                     .setBackOff(new ExponentialBackOff());
             mCredential.setSelectedAccount(account.getAccount());
+
             Intent moveToMainSecreen=new Intent
                     (MainActivity.this,MainActivity6.class);
             startActivity(moveToMainSecreen);
