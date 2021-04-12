@@ -56,6 +56,16 @@ public class MainActivity4 extends AppCompatActivity {
     to=text1.getText().toString();
     subject=text2.getText().toString();
     bodyText=text3.getText().toString();
+    closeDrawer(drawerMenuForScreen);
+    finish();
+
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{ to});
+        email.putExtra(Intent.EXTRA_SUBJECT, subject);
+        email.putExtra(Intent.EXTRA_TEXT, bodyText);
+        //need this to prompts email client only
+        email.setType("message/rfc822");
+        startActivity(Intent.createChooser(email, MainActivity.accountemail));
     }
 
     public void onCancelClick(View view){
@@ -103,9 +113,5 @@ public class MainActivity4 extends AppCompatActivity {
                     }
                 });
     }
-
-
-
-
 
 }

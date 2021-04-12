@@ -33,6 +33,7 @@
                     android:textColor="@color/black" />
                 <EditText
                     android:id="@+id/mailreciverfield"
+                    android:textSize="12pt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress" />
@@ -51,6 +52,7 @@
                 <EditText
                     android:id="@+id/mailsubjectfield"
                     android:layout_width="match_parent"
+                    android:textSize="12pt"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailSubject"/>
             </LinearLayout>
@@ -66,57 +68,37 @@
                 android:id="@+id/mailtextfield"
                 android:layout_width="match_parent"
                 android:layout_height="210dp"
+                android:textSize="15pt"
                 android:background="@color/H"/>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="15pt"
-                android:background="@color/H">
-
-                <ImageView
-                    android:layout_width="40dp"
+                android:layout_marginTop="35dp">
+                <Button
+                    android:layout_width="130dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10pt"
-                    android:onClick="onImageiconClick"
-                    android:src="@drawable/ic_baseline_image_24" />
-
-                <ImageView
-                    android:layout_width="40dp"
+                    android:text="send"
+                    android:layout_marginLeft="42dp"
+                    android:onClick="onSendClick"
+                    android:textColor="@color/black"
+                    android:background="@color/H"/>
+                <Button
+                    android:layout_width="130dp"
                     android:layout_height="40dp"
-                    android:layout_margin="10pt"
-                    android:onClick="onFileIconClick"
-                    android:src="@drawable/ic_baseline_attach_file_24" />
+                    android:textColor="@color/black"
+                    android:background="@color/H"
+                    android:text="cancel"
+                    android:layout_marginLeft="35dp"
+                    android:onClick="onCancelClick"
+                    />
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="10pt"
-                    android:onClick="onContactIconClick"
-                    android:src="@drawable/ic_baseline_contact_phone_24" />
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8pt"
-                android:orientation="horizontal"/>
-            <Button
-                android:layout_width="130dp"
-                android:layout_height="40dp"
-                android:text="send"
-                android:onClick="onSendClick"
-                android:textColor="@color/black"
-                android:background="@color/H"/>
-            <Button
-                android:layout_width="130dp"
-                android:layout_height="40dp"
-                android:textColor="@color/black"
-                android:background="@color/H"
-                android:text="cancel"
-                android:onClick="onCancelClick"
-                android:layout_marginTop="8pt"/>
 
         </LinearLayout>
+
+
     </LinearLayout>
 
     <RelativeLayout

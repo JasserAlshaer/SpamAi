@@ -7,11 +7,16 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,8 +52,9 @@ public class MainActivity6 extends AppCompatActivity {
     };
     TextView tab1,tab2,tab3;
     ListView applist;
-    ArrayList <String> emails,qoutation;
+    ArrayList <String> emails, Snipesset,messagesIds;
     ArrayAdapter myadapter;
+    int index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +74,9 @@ public class MainActivity6 extends AppCompatActivity {
             public void onClick(View v) {
                 tab2.setTextColor(Color.BLACK);
                 tab3.setTextColor(Color.BLACK);
+                emails.clear();
+                Snipesset.clear();
+                messagesIds.clear();
                 //Add Data For Email
                 tab1.setTextColor(Color.RED);
                 gmailTask task1=new gmailTask();
@@ -81,6 +90,9 @@ public class MainActivity6 extends AppCompatActivity {
                 tab1.setTextColor(Color.BLACK);
                 tab3.setTextColor(Color.BLACK);
                 tab2.setTextColor(Color.RED);
+                emails.clear();
+                Snipesset.clear();
+                messagesIds.clear();
                 gmailTask task1=new gmailTask();
                 task1.execute("in:spam");
             }
@@ -91,13 +103,17 @@ public class MainActivity6 extends AppCompatActivity {
                 tab2.setTextColor(Color.BLACK);
                 tab1.setTextColor(Color.BLACK);
                 tab3.setTextColor(Color.RED);
+                emails.clear();
+                Snipesset.clear();
+                messagesIds.clear();
                 gmailTask task1=new gmailTask();
                 task1.execute("in:trash");
                 //in:trash
             }
         });
         emails=new ArrayList<>();
-        qoutation=new ArrayList<>();
+        Snipesset =new ArrayList<>();
+        messagesIds=new ArrayList<>();
         myadapter=new ArrayAdapter(this,
                 R.layout.email_list_design,R.id.mailname,emails
         ){
@@ -107,14 +123,74 @@ public class MainActivity6 extends AppCompatActivity {
                 View view= super.getView(position, convertView, parent);
                 CircleImageView maimage=(CircleImageView)view.findViewById(R.id.mailpic);
                 TextView last=(TextView)view.findViewById(R.id.maillastmassage);
-                last.setText(qoutation.get(position)+"");
+                last.setText(Snipesset.get(position)+"");
                 //Fill Screen Content from Gmail Api
                 return view;
             }
         };
         applist.setAdapter(myadapter);
+        registerForContextMenu(applist);
+       //Invoke The On Click Listener
+        applist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent moveToSeeBody=new Intent(MainActivity6.this,MainActivity7.class);
+                moveToSeeBody.putExtra("messageId",messagesIds.get(position));
+                startActivity(moveToSeeBody);
+            }
+        });
+        applist.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+               index=position;
+               return false;
+            }
+        });
     }
-    //This method do the opening drawer operation
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo){
+      if(v.getId()==R.id.emailsList){
+          AdapterView.AdapterContextMenuInfo info=(AdapterView.AdapterContextMenuInfo)menuInfo;
+          menu.setHeaderTitle("Make A Choose :");
+          String [] menuItem=getResources().getStringArray(R.array.options);
+          for(int i=0;i<menuItem.length;i++){
+              menu.add(Menu.NONE,i,i,menuItem[i]);
+          }
+      }
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info=(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int menuItemIndex=item.getItemId();
+        String [] menuItem=getResources().getStringArray(R.array.options);
+        String menuItemName=menuItem[menuItemIndex];
+        Log.i("Op",menuItemIndex+"");
+        switch (menuItemIndex){
+            case 0:
+                //users.messages.trash
+                MoveToTrushTask task5=new MoveToTrushTask();
+                task5.execute(messagesIds.get(index));
+                Toast.makeText(MainActivity6.this, "Done", Toast.LENGTH_LONG).show();
+                break;
+            case 1:
+                Toast.makeText(MainActivity6.this, "Now This Feature is unavailable", Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                DeleteTask task=new DeleteTask();
+                task.execute(messagesIds.get(index));
+                Toast.makeText(MainActivity6.this, "Done", Toast.LENGTH_LONG).show();
+
+                break;
+            /*case 3:
+
+                break;*/
+        }
+        return super.onContextItemSelected(item);
+    }
+//This method do the opening drawer operation
 
     //Drawer Menu Method
     public void onDrawerMenuClick(View view){
@@ -163,7 +239,7 @@ public class MainActivity6 extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             pd = new ProgressDialog(MainActivity6.this);
-            pd.setMessage("Loading");
+            pd.setMessage("Please Wait , Data is Loading");
             pd.show();
         }
         @Override
@@ -176,35 +252,40 @@ public class MainActivity6 extends AppCompatActivity {
                             .setApplicationName("Spam Filtering")
                             .build();
             try {
-                List<String> stringList = new ArrayList();
                 ListMessagesResponse listMessagesResponse = mService.users().messages().list(MainActivity.accountemail)
                         .setQ(querys[0])
-                        .setMaxResults(Long.valueOf(6))
+                        .setMaxResults(Long.valueOf(16))
                         .setIncludeSpamTrash(true)
                         .execute();
-                List<Message> messageList = listMessagesResponse.getMessages();
 
-                for (Message message : messageList) {
-                    Message messageText = mService.users().messages().get(MainActivity.accountemail, message.getId()).setFormat("full").execute();
-                        //Get Headers
-                        List<MessagePartHeader> headers = messageText.getPayload().getHeaders();
-                        String from="";
-                        for (MessagePartHeader header:headers){
-                            if(header.getName().equals("From")){
-                                from=header.getValue();
-                                break;
+                if (listMessagesResponse.size()==0){
+                    Toast.makeText(MainActivity6.this, "Your Inbox Is Empty", Toast.LENGTH_SHORT).show();
+                }else {
+                    List<Message> messageList = listMessagesResponse.getMessages();
+                    for (Message message : messageList) {
+                        Message messageText = mService.users().messages().get(MainActivity.accountemail, message.getId()).setFormat("full").execute();
+                            //Get Headers
+                            List<MessagePartHeader> headers = messageText.getPayload().getHeaders();
+                            String from="";
+                            for (MessagePartHeader header:headers){
+                                if(header.getName().equals("From")){
+                                    from=header.getValue();
+                                    break;
+                                }
                             }
+                            Log.i("Reciver",MainActivity.accountemail);
+                            Log.i("From",from);
+                            Log.i("Label",messageText.getLabelIds().get(0));
+                            Log.i("Snippeset",messageText.getSnippet());
+                            Log.i("Id",messageText.getId());
+                            emails.add(from);
+                            Snipesset.add(messageText.getSnippet());
+                             messagesIds.add(messageText.getId());
+                            Log.i("hr","\n\n *******************************************************");
+
                         }
+                    }
 
-                        Log.i("Reciver",MainActivity.accountemail);
-                        Log.i("From",from);
-                        Log.i("Label",messageText.getLabelIds().get(0));
-                        Log.i("Snippeset",messageText.getSnippet());
-                        emails.add(from);
-                        qoutation.add(messageText.getSnippet());
-                        Log.i("hr","\n\n *******************************************************");
-
-                }
             }catch (IOException exception){
                 Log.e("BUG", "SheetUpdate IOException"+exception.getMessage());
                 exception.printStackTrace();
@@ -217,6 +298,75 @@ public class MainActivity6 extends AppCompatActivity {
             if (pd != null)
             {
                 myadapter.notifyDataSetChanged();
+                pd.dismiss();
+            }
+        }
+    }
+    class DeleteTask extends AsyncTask<String, Void, String > {
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity6.this);
+            pd.setMessage("Deleting");
+            pd.show();
+        }
+        @Override
+        protected String doInBackground(String... querys) {
+            transport = AndroidHttp.newCompatibleTransport();
+            mService = new com.google.api.services.gmail.Gmail.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    new GsonFactory(),
+                    MainActivity.mCredential)
+                    .setApplicationName("Spam Filtering")
+                    .build();
+            try {
+                mService.users().messages().delete(MainActivity.accountemail,querys[0]).execute();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            return "Delete";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (pd != null)
+            {
+                pd.dismiss();
+            }
+        }
+    }
+    //****************************************************************
+    class MoveToTrushTask extends AsyncTask<String, Void, String > {
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity6.this);
+            pd.setMessage("Please Wait ........");
+            pd.show();
+        }
+        @Override
+        protected String doInBackground(String... querys) {
+            transport = AndroidHttp.newCompatibleTransport();
+            mService = new com.google.api.services.gmail.Gmail.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    new GsonFactory(),
+                    MainActivity.mCredential)
+                    .setApplicationName("Spam Filtering")
+                    .build();
+            try {
+                mService.users().messages().trash(MainActivity.accountemail,querys[0]).execute();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            return "Trush";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (pd != null)
+            {
                 pd.dismiss();
             }
         }
