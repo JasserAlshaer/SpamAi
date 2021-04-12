@@ -2,6 +2,7 @@
     <string name="app_name">Spam Filtering</string>
     <string-array name="options">
         <item>Move To Trush</item>
+        <item>Move To Spam List</item>
         <item>Analyaze Email </item>
         <item>Delete This Mail</item>
     </string-array>

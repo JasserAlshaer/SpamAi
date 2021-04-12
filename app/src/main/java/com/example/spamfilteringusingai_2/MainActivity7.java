@@ -113,7 +113,13 @@ public class MainActivity7 extends AppCompatActivity {
                 String body = new String(bodyBytes, "UTF-8");
                 mailBody=body;
                 Log.i("Head",mailBody);
-            }catch (IOException exception){
+               /* ModifyMessageRequest mods = new ModifyMessageRequest();
+                List<String> stringList= new ArrayList<>();
+                stringList.add("UNREAD");
+                mods.setAddLabelIds(null);
+                mods.setRemoveLabelIds(stringList)  ;
+                mService.users().messages().modify(MainActivity.accountemail,gmailMessageId,mods).execute();
+            */}catch (IOException exception){
                 Log.e("BUG", "SheetUpdate IOException"+exception.getMessage());
                 exception.printStackTrace();
             }

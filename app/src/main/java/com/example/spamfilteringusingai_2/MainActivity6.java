@@ -35,6 +35,7 @@ import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePartHeader;
+import com.google.api.services.gmail.model.ModifyMessageRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -173,20 +174,22 @@ public class MainActivity6 extends AppCompatActivity {
                 //users.messages.trash
                 MoveToTrushTask task5=new MoveToTrushTask();
                 task5.execute(messagesIds.get(index));
-                Toast.makeText(MainActivity6.this, "Done", Toast.LENGTH_LONG).show();
                 break;
-            case 1:
-                Toast.makeText(MainActivity6.this, "Now This Feature is unavailable", Toast.LENGTH_LONG).show();
+          case 1:
+              Toast.makeText(MainActivity6.this, "Done", Toast.LENGTH_LONG).show();
+              MoveToSpamTask moveToSpamTask=new MoveToSpamTask();
+              moveToSpamTask.onPostExecute(messagesIds.get(index));
                 break;
             case 2:
+                Toast.makeText(MainActivity6.this, "Now This Feature is unavailable", Toast.LENGTH_LONG).show();
+                break;
+            case 3:
                 DeleteTask task=new DeleteTask();
                 task.execute(messagesIds.get(index));
                 Toast.makeText(MainActivity6.this, "Done", Toast.LENGTH_LONG).show();
 
                 break;
-            /*case 3:
 
-                break;*/
         }
         return super.onContextItemSelected(item);
     }
@@ -233,7 +236,7 @@ public class MainActivity6 extends AppCompatActivity {
     }
 
     class gmailTask extends AsyncTask<String, Void, String > {
-        int unreadNumber,message;
+
         ProgressDialog pd;
         @Override
         protected void onPreExecute() {
@@ -252,9 +255,10 @@ public class MainActivity6 extends AppCompatActivity {
                             .setApplicationName("Spam Filtering")
                             .build();
             try {
+
                 ListMessagesResponse listMessagesResponse = mService.users().messages().list(MainActivity.accountemail)
                         .setQ(querys[0])
-                        .setMaxResults(Long.valueOf(16))
+                        .setMaxResults(Long.valueOf(50))
                         .setIncludeSpamTrash(true)
                         .execute();
 
@@ -357,6 +361,46 @@ public class MainActivity6 extends AppCompatActivity {
                     .build();
             try {
                 mService.users().messages().trash(MainActivity.accountemail,querys[0]).execute();
+            } catch (IOException exception) {
+                exception.printStackTrace();
+            }
+            return "Trush";
+        }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (pd != null)
+            {
+                pd.dismiss();
+            }
+        }
+    }
+    //******************************************
+    class MoveToSpamTask extends AsyncTask<String, Void, String > {
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity6.this);
+            pd.setMessage("Please Wait ........");
+            pd.show();
+        }
+        @Override
+        protected String doInBackground(String... querys) {
+            transport = AndroidHttp.newCompatibleTransport();
+            mService = new com.google.api.services.gmail.Gmail.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    new GsonFactory(),
+                    MainActivity.mCredential)
+                    .setApplicationName("Spam Filtering")
+                    .build();
+            try {
+                ModifyMessageRequest mods = new ModifyMessageRequest();
+                List<String>stringList= new ArrayList<>();
+                stringList.add("SPAM");
+                mods.setAddLabelIds(stringList);
+                mods.setRemoveLabelIds(null)  ;
+                mService.users().messages().modify(MainActivity.accountemail,querys[0],mods).execute();
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
