@@ -1,31 +1,32 @@
    package com.example.spamfilteringusingai_2;
 
    import android.content.Context;
-   import android.content.Intent;
-   import android.os.Bundle;
-   import android.util.Log;
-   import android.view.View;
-   import android.widget.Toast;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
-   import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
-   import com.google.android.gms.auth.GoogleAuthUtil;
-   import com.google.android.gms.auth.api.signin.GoogleSignIn;
-   import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-   import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-   import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-   import com.google.android.gms.common.ConnectionResult;
-   import com.google.android.gms.common.api.ApiException;
-   import com.google.android.gms.common.api.Scope;
-   import com.google.android.gms.tasks.Task;
-   import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
-   import com.google.api.client.http.HttpTransport;
-   import com.google.api.client.json.JsonFactory;
-   import com.google.api.client.util.ExponentialBackOff;
-   import com.google.api.services.gmail.Gmail;
-   import com.google.api.services.gmail.GmailScopes;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.Task;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.util.ExponentialBackOff;
+import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.GmailScopes;
 
-   import java.util.Arrays;
+import java.io.IOException;
+import java.util.Arrays;
 
    public class MainActivity extends AppCompatActivity {
        private static final int RC_SIGN_IN = 9001;
@@ -49,16 +50,16 @@
         setContentView(R.layout.activity_main);
            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                    .requestScopes(
-                   new Scope(GmailScopes.MAIL_GOOGLE_COM)
-                   )
-                   .requestIdToken("884385265121-b0gtdrn1s0dkn2u1vk8m6qlp98mg5s5j.apps.googleusercontent.com")
+                   new Scope(GmailScopes.MAIL_GOOGLE_COM))
+                   .requestIdToken("828589037396-h6ph26hdfr3mgckoe951v0fobsbuerre.apps.googleusercontent.com")
                    .requestEmail()
                    .build();
            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
-    public void onLoginButtonPressed(View view){
-        signIn();
+    public void onLoginButtonPressed(View view) throws IOException {
+           signIn();
     }
+
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
