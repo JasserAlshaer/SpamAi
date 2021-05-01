@@ -1,10 +1,16 @@
 package com.example.spamfilteringusingai_2;
 
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -21,6 +27,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -55,6 +62,7 @@ public class MainActivity6 extends AppCompatActivity {
     ListView applist;
     ArrayList <String> emails, Snipesset,messagesIds;
     ArrayAdapter myadapter;
+
     int index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -181,7 +189,43 @@ public class MainActivity6 extends AppCompatActivity {
               moveToSpamTask.onPostExecute(messagesIds.get(index));
                 break;
             case 2:
-                Toast.makeText(MainActivity6.this, "Now This Feature is unavailable", Toast.LENGTH_LONG).show();
+                 AIAlgorithm obj=new AIAlgorithm();
+                 String data=obj.getHowManyString(Snipesset.get(index));
+                 NotificationManager mNotificationManager;
+
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(MainActivity6.this, "notify_001");
+                Intent ii = new Intent(this.getApplicationContext(), MainActivity6.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity6.this, 0, ii, 0);
+
+                NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+                bigText.bigText("Analayze Result");
+                bigText.setBigContentTitle("Spam Filltering Ai ");
+                bigText.setSummaryText(data);
+
+                mBuilder.setContentIntent(pendingIntent);
+                mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
+                mBuilder.setContentTitle("Your Title");
+                mBuilder.setContentText("Your text");
+                mBuilder.setPriority(Notification.PRIORITY_MAX);
+                mBuilder.setStyle(bigText);
+
+                mNotificationManager =
+                        (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                {
+                    String channelId = "notify_001";
+                    NotificationChannel channel = new NotificationChannel(
+                            channelId,
+                            "Channel human readable title",
+                            NotificationManager.IMPORTANCE_HIGH);
+                    mNotificationManager.createNotificationChannel(channel);
+                    mBuilder.setChannelId(channelId);
+                }
+
+                mNotificationManager.notify(0, mBuilder.build());
+                Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
                 break;
             case 3:
                 DeleteTask task=new DeleteTask();

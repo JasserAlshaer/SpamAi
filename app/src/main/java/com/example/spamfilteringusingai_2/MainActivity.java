@@ -26,6 +26,7 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
    public class MainActivity extends AppCompatActivity {
@@ -39,6 +40,7 @@ import java.util.Arrays;
        Gmail mService;
        HttpTransport transport;
        JsonFactory jsonFactory;
+       static  InputStream is;
        public static  GoogleAccountCredential mCredential;
        private ConnectionResult mConnectionResult;
        static String[] SCOPES = {
@@ -51,14 +53,24 @@ import java.util.Arrays;
            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                    .requestScopes(
                    new Scope(GmailScopes.MAIL_GOOGLE_COM))
-                   .requestIdToken("828589037396-h6ph26hdfr3mgckoe951v0fobsbuerre.apps.googleusercontent.com")
+                   .requestIdToken("884385265121-b0gtdrn1s0dkn2u1vk8m6qlp98mg5s5j.apps.googleusercontent.com")
                    .requestEmail()
                    .build();
            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
     public void onLoginButtonPressed(View view) throws IOException {
            signIn();
+        System.out.println("Hello");
+        try {
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
     }
+       /**
+        * This method is used to process the input and return the statistics.
+        *
+        * @throws Exception
+        */
 
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
