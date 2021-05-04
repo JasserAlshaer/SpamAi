@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.ListMessagesResponse;
@@ -44,7 +45,13 @@ import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +60,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity6 extends AppCompatActivity {
     Gmail mService;
     HttpTransport transport;
+    NotificationManager mNotificationManager;
     DrawerLayout drawerMenuForScreen;
     private ConnectionResult mConnectionResult;
     static String[] SCOPES = {
@@ -62,8 +70,9 @@ public class MainActivity6 extends AppCompatActivity {
     ListView applist;
     ArrayList <String> emails, Snipesset,messagesIds;
     ArrayAdapter myadapter;
-
+    String  mailBody,messageStatus,NofificationText;
     int index;
+    double spamPersenteg,notSpamPersentage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,7 +185,6 @@ public class MainActivity6 extends AppCompatActivity {
         int menuItemIndex=item.getItemId();
         String [] menuItem=getResources().getStringArray(R.array.options);
         String menuItemName=menuItem[menuItemIndex];
-        Log.i("Op",menuItemIndex+"");
         switch (menuItemIndex){
             case 0:
                 //users.messages.trash
@@ -189,43 +197,12 @@ public class MainActivity6 extends AppCompatActivity {
               moveToSpamTask.onPostExecute(messagesIds.get(index));
                 break;
             case 2:
-                 AIAlgorithm obj=new AIAlgorithm();
-                 String data=obj.getHowManyString(Snipesset.get(index));
-                 NotificationManager mNotificationManager;
-
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(MainActivity6.this, "notify_001");
-                Intent ii = new Intent(this.getApplicationContext(), MainActivity6.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity6.this, 0, ii, 0);
-
-                NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-                bigText.bigText("Analayze Result");
-                bigText.setBigContentTitle("Spam Filltering Ai ");
-                bigText.setSummaryText(data);
-
-                mBuilder.setContentIntent(pendingIntent);
-                mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
-                mBuilder.setContentTitle("Your Title");
-                mBuilder.setContentText("Your text");
-                mBuilder.setPriority(Notification.PRIORITY_MAX);
-                mBuilder.setStyle(bigText);
-
+                getBodyTask newBody =new getBodyTask();
+                newBody.execute(messagesIds.get(index));
+                AnalayzeEmail task18=new AnalayzeEmail();
+                task18.execute("https://api.uclassify.com/v1/hiba%20alawamleh/appspamfiltering/classify?readkey=LjzwOBotnCgj&text="+mailBody);
                 mNotificationManager =
                         (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                {
-                    String channelId = "notify_001";
-                    NotificationChannel channel = new NotificationChannel(
-                            channelId,
-                            "Channel human readable title",
-                            NotificationManager.IMPORTANCE_HIGH);
-                    mNotificationManager.createNotificationChannel(channel);
-                    mBuilder.setChannelId(channelId);
-                }
-
-                mNotificationManager.notify(0, mBuilder.build());
-                Toast.makeText(this, data, Toast.LENGTH_SHORT).show();
                 break;
             case 3:
                 DeleteTask task=new DeleteTask();
@@ -278,7 +255,6 @@ public class MainActivity6 extends AppCompatActivity {
                     }
                 });
     }
-
     class gmailTask extends AsyncTask<String, Void, String > {
 
         ProgressDialog pd;
@@ -450,6 +426,138 @@ public class MainActivity6 extends AppCompatActivity {
             }
             return "Trush";
         }
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (pd != null)
+            {
+                pd.dismiss();
+            }
+        }
+    }
+    class AnalayzeEmail extends AsyncTask<String,Void,String>{
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity6.this);
+            pd.setMessage("Please Wait The Email under Processing........");
+            pd.show();
+        }
+        @Override
+        protected String doInBackground(String... urls) {
+            URL link;
+            HttpURLConnection connection=null;
+            try {
+                link=new URL(urls[0]);
+                connection=(HttpURLConnection)link.openConnection();
+                InputStream in=connection.getInputStream();
+                InputStreamReader streamReader=new InputStreamReader(in);
+                String result="";
+                int data=streamReader.read();
+                while (data !=-1){
+                    char current=(char)data;
+                    result+=current;
+                    data=streamReader.read();
+                }
+                return result;
+            }catch (Exception ex){
+                ex.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            if (pd != null)
+            {
+                pd.dismiss();
+                try{
+                    JSONObject jos=new JSONObject(result);
+                    String not=jos.getString("not spam");
+                    String spa=jos.getString("spam");
+                    notSpamPersentage=Double.parseDouble(not)*100;
+                    spamPersenteg=Double.parseDouble(spa)*100;
+                    if(notSpamPersentage>99){
+                        messageStatus="Safe Message";
+                        NofificationText="Analayze Result  Done \n " +
+                                "Dear user\n" +
+                                "The message you just analyzed  It's safe Message You Can Deal With Message Without Any Problem ";
+                    }else{
+                        messageStatus="UnSafe Message";
+                        NofificationText="Analayze Result \n " +
+                                "Dear user\n" +
+                                "The message you just analyzed could be an "+ spamPersenteg+"% fake and junk email."+
+                                "\n Please Back to Application  To take appropriate action";
+                    }
+
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(MainActivity6.this, "notify_001");
+                    Intent ii = new Intent(getApplicationContext(), MainActivity6.class);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity6.this, 0, ii, 0);
+                    NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
+                    mBuilder.setContentIntent(pendingIntent);
+                    mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
+                    mBuilder.setContentTitle("Your Title");
+                    mBuilder.setContentText("Your text");
+                    mBuilder.setPriority(Notification.PRIORITY_MAX);
+                    mBuilder.setStyle(bigText);
+
+
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    {
+                        String channelId = "notify_001";
+                        NotificationChannel channel = new NotificationChannel(
+                                channelId,
+                                "Channel human readable title",
+                                NotificationManager.IMPORTANCE_HIGH);
+                        mNotificationManager.createNotificationChannel(channel);
+                        mBuilder.setChannelId(channelId);
+                    }
+                    mNotificationManager.notify(0, mBuilder.build());
+                }catch (Exception e){
+
+                }
+            }
+        }
+    }
+    class getBodyTask extends AsyncTask<String, Void, String > {
+        ProgressDialog pd;
+        Gmail mService;
+        HttpTransport transport;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pd = new ProgressDialog(MainActivity6.this);
+            pd.setMessage("Please Wait , Data is Loading");
+            pd.show();
+        }
+        @Override
+        protected String doInBackground(String... querys) {
+            transport = AndroidHttp.newCompatibleTransport();
+            mService = new com.google.api.services.gmail.Gmail.Builder(
+                    AndroidHttp.newCompatibleTransport(),
+                    new GsonFactory(),
+                    MainActivity.mCredential)
+                    .setApplicationName("Spam Filtering")
+                    .build();
+
+            try {
+                // Message message = mService.users().messages().get(MainActivity.accountemail,gmailMessageId).setFormat("raw").execute();
+                Message messagetext = mService.users().messages().get(MainActivity.accountemail,querys[0]).setFormat("full").execute();
+                byte[] bodyBytes = Base64.decodeBase64(messagetext.getPayload().getParts().get(0).getBody().getData().trim());
+                String body = new String(bodyBytes, "UTF-8");
+                mailBody=body;
+            }catch (IOException exception){
+                Log.e("BUG", "SheetUpdate IOException"+exception.getMessage());
+                exception.printStackTrace();
+            }
+            return "Gmail";
+        }
+
+
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);

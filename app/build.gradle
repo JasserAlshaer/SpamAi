@@ -1,11 +1,9 @@
 plugins {
     id 'com.android.application'
 }
-
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
-
     defaultConfig {
         applicationId "com.example.spamfilteringusingai_2"
         minSdkVersion 16
@@ -62,9 +60,7 @@ dependencies {
     }
     implementation 'com.android.volley:volley:1.2.0'
     implementation platform('com.google.cloud:libraries-bom:19.2.1')
-
     implementation  'com.google.cloud:google-cloud-bigquery'
     implementation platform('com.google.cloud:libraries-bom:20.0.0')
-
     implementation 'com.google.cloud:google-cloud-pubsub'
 }
