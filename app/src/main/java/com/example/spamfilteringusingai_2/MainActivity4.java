@@ -112,6 +112,5 @@ public class MainActivity4 extends AppCompatActivity {
                         startActivity(backtohome);
                     }
                 });
+         }
     }
-
-}

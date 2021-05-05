@@ -135,7 +135,6 @@ public class  MainActivity5 extends AppCompatActivity {
                         .setIncludeSpamTrash(true)
                         .execute();
                 List<Message> messageList = listMessagesResponse.getMessages();
-
                 for (Message message : messageList) {
                     Message messageText = mService.users().messages().get(MainActivity.accountemail, message.getId()).setFormat("full").execute();
                     //Get Headers
@@ -147,18 +146,9 @@ public class  MainActivity5 extends AppCompatActivity {
                             break;
                         }
                     }
-
-                    Log.i("Reciver",MainActivity.accountemail);
-                    Log.i("From",from);
-                    Log.i("Label",messageText.getLabelIds().get(0));
-                    Log.i("Snippeset",messageText.getSnippet());
                     outbox.add(from);
                     qoutation.add(messageText.getSnippet());
-                    Log.i("hr","\n\n *******************************************************");
-
                 }
-
-                // Message sendMail=mService.users().messages().send(MainActivity.accountemail,);
             }catch (IOException exception){
                 Log.e("BUG", "SheetUpdate IOException"+exception.getMessage());
                 exception.printStackTrace();

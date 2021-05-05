@@ -3,7 +3,6 @@
    import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -28,8 +27,7 @@ import com.google.api.services.gmail.GmailScopes;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-
-   public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
        private static final int RC_SIGN_IN = 9001;
        private  static final int REQUEST_CODE_TOKEN_AUTH=1337;
        public static GoogleSignInClient mGoogleSignInClient;
@@ -53,14 +51,13 @@ import java.util.Arrays;
            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                    .requestScopes(
                    new Scope(GmailScopes.MAIL_GOOGLE_COM))
-                   .requestIdToken("884385265121-b0gtdrn1s0dkn2u1vk8m6qlp98mg5s5j.apps.googleusercontent.com")
+                   .requestIdToken("65917742189-7mg7jaaruki4tp2tctrqvdlvcekok1kj.apps.googleusercontent.com")
                    .requestEmail()
                    .build();
            mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
     public void onLoginButtonPressed(View view) throws IOException {
            signIn();
-        System.out.println("Hello");
         try {
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -106,8 +103,6 @@ import java.util.Arrays;
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Toast.makeText(mContext, "SignInFailed", Toast.LENGTH_SHORT).show();
-            Log.w("info", "signInResult:failed code=" + e.getStatusCode());
         }
     }
-
 }

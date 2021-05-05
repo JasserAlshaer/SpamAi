@@ -1,6 +1,4 @@
 package com.example.spamfilteringusingai_2;
-
-
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -56,7 +54,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MainActivity6 extends AppCompatActivity {
     Gmail mService;
     HttpTransport transport;
@@ -74,6 +71,7 @@ public class MainActivity6 extends AppCompatActivity {
     int index;
     double spamPersenteg,notSpamPersentage;
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main6);
@@ -86,7 +84,6 @@ public class MainActivity6 extends AppCompatActivity {
         //Use Api First Time
         gmailTask task1=new gmailTask();
         task1.execute("in:inbox");
-
         tab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,16 +294,9 @@ public class MainActivity6 extends AppCompatActivity {
                                     break;
                                 }
                             }
-                            Log.i("Reciver",MainActivity.accountemail);
-                            Log.i("From",from);
-                            Log.i("Label",messageText.getLabelIds().get(0));
-                            Log.i("Snippeset",messageText.getSnippet());
-                            Log.i("Id",messageText.getId());
                             emails.add(from);
                             Snipesset.add(messageText.getSnippet());
                              messagesIds.add(messageText.getId());
-                            Log.i("hr","\n\n *******************************************************");
-
                         }
                     }
 
@@ -346,6 +336,8 @@ public class MainActivity6 extends AppCompatActivity {
                     .build();
             try {
                 mService.users().messages().delete(MainActivity.accountemail,querys[0]).execute();
+                Intent movetohome=new Intent(getApplicationContext(),MainActivity6.class);
+                startActivity(movetohome);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -381,6 +373,8 @@ public class MainActivity6 extends AppCompatActivity {
                     .build();
             try {
                 mService.users().messages().trash(MainActivity.accountemail,querys[0]).execute();
+                Intent movetohome=new Intent(getApplicationContext(),MainActivity6.class);
+                startActivity(movetohome);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -421,6 +415,8 @@ public class MainActivity6 extends AppCompatActivity {
                 mods.setAddLabelIds(stringList);
                 mods.setRemoveLabelIds(null)  ;
                 mService.users().messages().modify(MainActivity.accountemail,querys[0],mods).execute();
+                Intent movetohome=new Intent(getApplicationContext(),MainActivity6.class);
+                startActivity(movetohome);
             } catch (IOException exception) {
                 exception.printStackTrace();
             }
@@ -472,6 +468,7 @@ public class MainActivity6 extends AppCompatActivity {
             super.onPostExecute(result);
             if (pd != null)
             {
+                messageStatus="";
                 pd.dismiss();
                 try{
                     JSONObject jos=new JSONObject(result);
@@ -488,7 +485,7 @@ public class MainActivity6 extends AppCompatActivity {
                         messageStatus="UnSafe Message";
                         NofificationText="Analayze Result \n " +
                                 "Dear user\n" +
-                                "The message you just analyzed could be an "+ spamPersenteg+"% fake and junk email."+
+                                "The message you just analyzed could be an "+ (int)spamPersenteg+"% fake and junk email."+
                                 "\n Please Back to Application  To take appropriate action";
                     }
 
@@ -499,12 +496,10 @@ public class MainActivity6 extends AppCompatActivity {
                     NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
                     mBuilder.setContentIntent(pendingIntent);
                     mBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
-                    mBuilder.setContentTitle("Your Title");
-                    mBuilder.setContentText("Your text");
+                    mBuilder.setContentTitle(messageStatus);
+                    mBuilder.setContentText(NofificationText);
                     mBuilder.setPriority(Notification.PRIORITY_MAX);
                     mBuilder.setStyle(bigText);
-
-
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     {
@@ -528,13 +523,6 @@ public class MainActivity6 extends AppCompatActivity {
         Gmail mService;
         HttpTransport transport;
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd = new ProgressDialog(MainActivity6.this);
-            pd.setMessage("Please Wait , Data is Loading");
-            pd.show();
-        }
-        @Override
         protected String doInBackground(String... querys) {
             transport = AndroidHttp.newCompatibleTransport();
             mService = new com.google.api.services.gmail.Gmail.Builder(
@@ -556,16 +544,5 @@ public class MainActivity6 extends AppCompatActivity {
             }
             return "Gmail";
         }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            if (pd != null)
-            {
-                pd.dismiss();
-            }
-        }
     }
 }
-
