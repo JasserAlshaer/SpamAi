@@ -3,7 +3,8 @@
    import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+   import android.util.Log;
+   import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Toast.makeText(mContext, "SignInFailed", Toast.LENGTH_SHORT).show();
+            Log.i("popa",e.getStatusCode()+"");
         }
     }
 }
